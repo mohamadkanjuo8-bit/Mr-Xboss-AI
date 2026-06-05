@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr Xboss AI - المساعد العربي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mr Xboss AI - الوضع الإبداعي والبرمجي</title>
     <style>
         * {
             margin: 0;
@@ -18,17 +18,17 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
         }
 
         .chat-container {
             width: 100%;
-            max-width: 900px;
-            background: rgba(18, 25, 45, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 32px;
-            border: 1px solid rgba(79, 129, 232, 0.4);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+            max-width: 950px;
+            background: rgba(18, 25, 45, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 36px;
+            border: 1px solid rgba(79, 129, 232, 0.5);
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.4);
             overflow: hidden;
         }
 
@@ -43,8 +43,7 @@
         }
 
         .title h1 {
-            color: #fff;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             background: linear-gradient(120deg, #fff, #7aa2f7);
             background-clip: text;
             -webkit-background-clip: text;
@@ -79,7 +78,7 @@
         .message {
             max-width: 85%;
             padding: 12px 18px;
-            border-radius: 22px;
+            border-radius: 24px;
             font-size: 0.95rem;
             line-height: 1.45;
             animation: fadeIn 0.25s ease;
@@ -117,7 +116,7 @@
 
         .mode-selector {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 15px;
             flex-wrap: wrap;
         }
@@ -126,7 +125,7 @@
             background: #111a2b;
             border: 1px solid #2a3a60;
             color: #bfd6ff;
-            padding: 6px 18px;
+            padding: 6px 16px;
             border-radius: 40px;
             font-size: 0.75rem;
             cursor: pointer;
@@ -158,7 +157,6 @@
             font-size: 0.9rem;
             resize: none;
             outline: none;
-            transition: 0.2s;
         }
 
         textarea:focus {
@@ -172,13 +170,13 @@
             border-radius: 60px;
             width: 50px;
             height: 50px;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             cursor: pointer;
             color: white;
-            transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: 0.2s;
         }
 
         button:hover {
@@ -187,8 +185,14 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px);}
-            to { opacity: 1; transform: translateY(0);}
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         ::-webkit-scrollbar {
@@ -209,14 +213,17 @@
     <div class="chat-header">
         <div class="title">
             <h1>🤖 Mr Xboss AI</h1>
-            <p>مساعد عربي ذكي - اختر الوضع المناسب</p>
+            <p>إبداعي · برمجي · سريع</p>
         </div>
-        <div class="badge">coreKtx v1.13.0</div>
+        <div class="badge">coreKtx v2.0</div>
     </div>
 
     <div class="chat-box" id="chatBox">
         <div class="message bot-message">
-            👋 أهلاً! أنا Mr Xboss AI. اسألني أي شيء واختر الوضع: عادي، رسمي، إبداعي، أو برمجي.
+            ✨ أهلاً! أنا Mr Xboss AI. اختر الوضع:<br>
+            • 🎨 **إبداعي** → ما أجادل، أتفهم وأشجع.<br>
+            • 💻 **برمجي** → أجاوب على الأكواد والمنطق.<br>
+            • 🎩 **رسمي** + ✨ **عادي**.
         </div>
     </div>
 
@@ -224,7 +231,7 @@
         <div class="mode-selector" id="modeSelector">
             <button class="mode-btn active" data-mode="normal">✨ عادي</button>
             <button class="mode-btn" data-mode="formal">🎩 رسمي</button>
-            <button class="mode-btn" data-mode="creative">🎨 إبداعي</button>
+            <button class="mode-btn" data-mode="creative">🎨 إبداعي (لا جدال)</button>
             <button class="mode-btn" data-mode="coding">💻 برمجي</button>
         </div>
         <div class="input-wrapper">
@@ -235,118 +242,132 @@
 </div>
 
 <script>
-    let currentMode = "normal";
-    const chatBox = document.getElementById('chatBox');
-    const userInput = document.getElementById('userInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const modeBtns = document.querySelectorAll('.mode-btn');
+    (function() {
+        let currentMode = "normal";
+        const chatBox = document.getElementById('chatBox');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const modeBtns = document.querySelectorAll('.mode-btn');
 
-    modeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            modeBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentMode = btn.getAttribute('data-mode');
-            const modeName = btn.innerText.trim();
-            addBotMessage(`✅ تم التبديل إلى الوضع **${modeName}**`);
+        // ضبط الأزرار
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.getAttribute('data-mode');
+                const modeName = btn.innerText.trim();
+                addBotMessage(`✅ تم التبديل إلى الوضع **${modeName}**`);
+            });
         });
-    });
 
-    function sendMessage() {
-        const question = userInput.value.trim();
-        if (!question) return;
+        // وظيفة الردود الذكية حسب طول السؤال (3 ثواني + طول)
+        function generateReply(question, mode) {
+            const q = question.trim();
+            const len = q.length;
+            let baseDelay = 800; // أقل شي
+            if (len > 150) baseDelay = 2200;
+            else if (len > 60) baseDelay = 1500;
+            else baseDelay = 800;
 
-        addUserMessage(question);
-        userInput.value = '';
-        userInput.style.height = 'auto';
-
-        const typingId = showTypingIndicator();
-
-        setTimeout(() => {
-            removeTypingIndicator(typingId);
-            const reply = generateReply(question, currentMode);
-            addBotMessage(reply);
-            scrollToBottom();
-        }, 600);
-    }
-
-    function generateReply(question, mode) {
-        const q = question.toLowerCase();
-
-        if (mode === 'coding') {
-            if (q.includes('كود') || q.includes('برنامج') || q.includes('جافا') || q.includes('html')) {
-                return `💻 **كود جاهز**:
-\`\`\`javascript
-// مثال بسيط
-function greet() {
-  return "مرحباً من Mr Xboss AI";
-}
-console.log(greet());
-\`\`\`
-أخبرني ماذا تريد برمجته بالضبط.`;
+            // الوضع الإبداعي (ما يجادل نهائياً)
+            if (mode === 'creative') {
+                return `🎨 **رد إبداعي (بدون جدال)**:\n"${q}"\n\nرأيك يحترم، وأنا هنا لأفهم لا لأجادل. فكرتك جميلة، كيف أقدر أطورها معك؟ 🌟`;
             }
-            return `💻 **الوضع البرمجي**:
-أهلاً! اشرح المهمة البرمجية التي تريدها (JavaScript, Python, HTML, CSS) وسأكتب لك الكود المناسب.`;
+
+            // الوضع البرمجي (أي كود أو أمر برمجي)
+            if (mode === 'coding') {
+                if (q.includes('كود') || q.includes('برمج') || q.includes('html') || q.includes('css') || q.includes('js') || q.includes('جافا') || q.includes('بايثون')) {
+                    return `💻 **تحليل برمجي**:\nممتاز، فهمت طلبك البرمجي. الحل المبدئي:\n\`\`\`\n// بناءً على: "${q.substring(0, 90)}"\nfunction smartSolution(input) {\n  return "نتيجة مخصصة حسب متطلباتك";\n}\n\`\`\`\nأعطني تفاصيل أكثر وسأكتب كود كامل.`;
+                } else {
+                    return `💻 **الوضع البرمجي**:\nأهلاً! اشرح المهمة البرمجية بدقة (لغة، مدخلات، مخرجات) وسأقدم لك كوداً نظيفاً.`;
+                }
+            }
+
+            // الوضع الرسمي
+            if (mode === 'formal') {
+                return `🎩 **الرد الرسمي**:\nتحية طيبة. بناءً على استفسارك "${q.substring(0, 60)}..."، يسعدنا تقديم الإجابة المناسبة. هل تطلب المزيد من التفاصيل؟`;
+            }
+
+            // الوضع العادي
+            if (q.includes('مرحبا') || q.includes('السلام') || q.includes('هلا')) {
+                return '🌹 وعليكم السلام ورحمة الله! أهلاً بك. كيف أقدر أساعدك اليوم؟';
+            }
+            if (q.includes('شكرا') || q.includes('مشكور')) {
+                return '🙏 العفو، هذا واجبي. أنا موجود لأخدمك في أي وقت.';
+            }
+            if (q.includes('اسمك') || q.includes('مين انت') || q.includes('من انت')) {
+                return '🤖 أنا Mr Xboss AI، مساعد عربي ذكي. أستطيع التبديل بين الوضع العادي، الرسمي، الإبداعي (بدون جدال)، والبرمجي.';
+            }
+            return `✨ **رد سريع**:\nسؤالك: "${q}"\nأنا هنا للإجابة. جرب الوضع الإبداعي أو البرمجي لميزات إضافية.`;
         }
 
-        if (mode === 'formal') {
-            return `🎩 **الرد الرسمي**:
-تحية طيبة. بناءً على استفسارك: "${question.substring(0, 60)}..."، يسرنا تقديم المساعدة اللازمة. هل تطلب تفاصيل إضافية؟`;
+        // دوال المساعدة
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'message user-message';
+            div.textContent = text;
+            chatBox.appendChild(div);
+            scrollToBottom();
         }
 
-        if (mode === 'creative') {
-            return `🎨 **رد إبداعي**:
-واو! سؤالك "${question.substring(0, 50)}" يحفز الخيال. دعني أفكر بشكل مبتكر... 
-الذكاء والبرمجة يفتحان أبواباً لا حدود لها. كيف يمكنني مساعدتك بشكل إبداعي اليوم؟`;
+        function addBotMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'message bot-message';
+            div.innerHTML = text.replace(/\n/g, '<br>');
+            chatBox.appendChild(div);
+            scrollToBottom();
         }
 
-        if (q.includes('مرحبا') || q.includes('السلام') || q.includes('هلا')) {
-            return '🌹 وعليكم السلام ورحمة الله! أهلاً بك. كيف أقدر أساعدك اليوم؟';
+        function showTypingIndicator() {
+            const id = 'typing-' + Date.now();
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = 'message typing';
+            div.textContent = '✍️ Mr Xboss يكتب...';
+            chatBox.appendChild(div);
+            scrollToBottom();
+            return id;
         }
-        if (q.includes('شكرا') || q.includes('مشكور')) {
-            return '🙏 العفو، هذا واجبي. أنا موجود لأخدمك في أي وقت.';
+
+        function removeTypingIndicator(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
         }
-        if (q.includes('اسمك') || q.includes('مين انت') || q.includes('من انت')) {
-            return '🤖 أنا Mr Xboss AI، مساعد عربي ذكي.';
+
+        function scrollToBottom() {
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        return `✨ سؤالك: "${question}"`;
-    }
+        // إرسال الرسالة مع مدة تتناسب مع طول السؤال (3 ثواني كحد أقصى)
+        function sendMessage() {
+            const question = userInput.value.trim();
+            if (!question) return;
 
-    function addUserMessage(text) {
-        const div = document.createElement('div');
-        div.className = 'message user-message';
-        div.textContent = text;
-        chatBox.appendChild(div);
-    }
+            addUserMessage(question);
+            userInput.value = '';
+            userInput.style.height = 'auto';
 
-    function addBotMessage(text) {
-        const div = document.createElement('div');
-        div.className = 'message bot-message';
-        div.innerHTML = text.replace(/
-/g, '<br>');
-        chatBox.appendChild(div);
-    }
+            const typingId = showTypingIndicator();
 
-    function showTypingIndicator() {
-        const id = 'typing-' + Date.now();
-        const div = document.createElement('div');
-        div.id = id;
-        div.className = 'message typing';
-        div.textContent = 'يكتب...';
-        chatBox.appendChild(div);
-        return id;
-    }
+            // حساب الوقت: 0.8~2.5 ثانية حسب طول النص
+            let delay = Math.min(800 + Math.floor(question.length / 15) * 60, 2500);
+            setTimeout(() => {
+                removeTypingIndicator(typingId);
+                const reply = generateReply(question, currentMode);
+                addBotMessage(reply);
+                scrollToBottom();
+            }, delay);
+        }
 
-    function removeTypingIndicator(id) {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-    }
-
-    function scrollToBottom() {
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    sendBtn.addEventListener('click', sendMessage);
+        // ربط الحدث بطريقة مضمونة
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    })();
 </script>
 
 </body>
