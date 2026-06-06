@@ -475,13 +475,21 @@
 </div>
 
 <script>
-const API_KEY = "AQ.Ab8RN6KcGBJLoQrZvMHlQG_OgsyFIF0hP_cSpM6gIAcrPtxdgA";
-const SYSTEM_PROMPT = `أنت Mr Xboss AI، مساعد برمجي وتقني متقدم. أنت خبير في:
+const API_KEY = "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";
+const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const MODEL = "deepseek/deepseek-r1:free";
+
+// Conversation history
+let conversationHistory = [
+  {
+    role: "system",
+    content: `أنت Mr Xboss AI، مساعد برمجي وتقني متقدم. أنت خبير في:
 - كتابة وتعديل الأكواد بجميع لغات البرمجة (Python, JavaScript, HTML, CSS, Java, C++, وغيرها)
 - تصحيح الأخطاء البرمجية وشرح سببها بوضوح
 - شرح المفاهيم التقنية بطريقة بسيطة ومفهومة
 - تحسين الأكواد وجعلها أفضل وأسرع
 - بناء مشاريع كاملة خطوة بخطوة
+- المساعدة بالدراسة وشرح أي مادة
 
 قواعد الرد:
 1. استخدم Markdown في ردودك دائماً (كود داخل code blocks، عناوين، قوائم)
@@ -489,10 +497,9 @@ const SYSTEM_PROMPT = `أنت Mr Xboss AI، مساعد برمجي وتقني م�
 3. اشرح الكود بعد ما تكتبه بشكل مختصر
 4. إذا في خطأ، اشرح السبب أولاً ثم اعطِ الحل
 5. الردود بالعربية، لكن أسماء المتغيرات والكود بالإنجليزي
-6. كن مباشر وعملي، ما تطوّل بلا داعي`;
-
-// Conversation history for Gemini format
-let conversationHistory = [];
+6. كن مباشر وعملي، ما تطوّل بلا داعي`
+  }
+];
 
 const chatBox = document.getElementById('chatBox');
 const userInput = document.getElementById('userInput');
@@ -634,32 +641,35 @@ async function sendMessage() {
   userInput.value = '';
   userInput.style.height = 'auto';
 
-  // Add to Gemini history format
-  conversationHistory.push({ role: "user", parts: [{ text: question }] });
+  // Add to history
+  conversationHistory.push({ role: "user", content: question });
 
   sendBtn.disabled = true;
   showTyping();
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: conversationHistory,
-          generationConfig: { temperature: 0.7, maxOutputTokens: 3000 }
-        })
-      }
-    );
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://mrxboss.vercel.app",
+        "X-Title": "Mr Xboss AI"
+      },
+      body: JSON.stringify({
+        model: "deepseek/deepseek-r1:free",
+        messages: conversationHistory,
+        max_tokens: 3000,
+        temperature: 0.7
+      })
+    });
 
     const data = await response.json();
     hideTyping();
 
-    if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-      const reply = data.candidates[0].content.parts[0].text;
-      conversationHistory.push({ role: "model", parts: [{ text: reply }] });
+    if (data.choices && data.choices[0]?.message?.content) {
+      const reply = data.choices[0].message.content;
+      conversationHistory.push({ role: "assistant", content: reply });
       addBotMessage(reply);
     } else {
       addBotMessage("⚠️ حدث خطأ. تأكد من صلاحية الـ API Key وحاول مجدداً.");
